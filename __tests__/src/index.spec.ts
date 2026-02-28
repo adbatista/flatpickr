@@ -66,7 +66,7 @@ function incrementTime(
   const childNodeNum = by >= 0 ? 1 : 2;
 
   if (e !== undefined && e.parentNode)
-    for (let i = times; i--; )
+    for (let i = times; i--;)
       simulate(
         "click",
         e.parentNode.childNodes[childNodeNum],
@@ -85,7 +85,7 @@ function simulate(
   const evt = new (type || CustomEvent)(eventType, eventOptions);
   try {
     Object.assign(evt, eventOptions);
-  } catch (e) {}
+  } catch (e) { }
 
   onElement.dispatchEvent(evt);
 }
@@ -1196,6 +1196,57 @@ describe("flatpickr", () => {
           createInstance({
             plugins: [confirmDatePlugin({})],
           });
+        });
+
+        it("mobileFormatStr excludes seconds for datetime-local", () => {
+          mockAgent = "Android";
+          createInstance({
+            enableTime: true,
+            enableSeconds: true,
+          });
+
+          expect(fp.mobileFormatStr).toBe("Y-m-d\\TH:i");
+        });
+
+        it("mobileFormatStr excludes seconds for time", () => {
+          mockAgent = "Android";
+          createInstance({
+            enableTime: true,
+            noCalendar: true,
+            enableSeconds: true,
+          });
+
+          expect(fp.mobileFormatStr).toBe("H:i");
+        });
+
+        it("formats value without seconds when defaultDate has seconds", () => {
+          mockAgent = "Android";
+          createInstance({
+            enableTime: true,
+            defaultDate: "2024-02-08T14:30:45",
+          });
+
+          const mobileInput = fp.mobileInput as HTMLInputElement;
+          expect(mobileInput.value).toBe("2024-02-08T14:30");
+        });
+
+        it("onChange parses value correctly without seconds", () => {
+          mockAgent = "Android";
+          createInstance({
+            enableTime: true,
+          });
+
+          const mobileInput = fp.mobileInput as HTMLInputElement;
+          mobileInput.value = "2024-02-08T14:30";
+          simulate("change", mobileInput);
+
+          expect(fp.selectedDates.length).toBe(1);
+          expect(fp.latestSelectedDateObj).toBeDefined();
+
+          if (!fp.latestSelectedDateObj) return;
+          expect(fp.latestSelectedDateObj.getHours()).toBe(14);
+          expect(fp.latestSelectedDateObj.getMinutes()).toBe(30);
+          expect(fp.latestSelectedDateObj.getSeconds()).toBe(0);
         });
       });
     });
