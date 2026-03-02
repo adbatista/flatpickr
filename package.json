@@ -42,7 +42,7 @@
     "rollup": "^2.35.1",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-serve": "1.1.0",
+    "rollup-plugin-serve": "3.0.0",
     "rollup-plugin-typescript": "^1.0.1",
     "stylus": "latest",
     "terser": "^5.5.1",
